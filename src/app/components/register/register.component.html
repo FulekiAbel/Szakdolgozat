@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <div class="row mt-5">
+      <div class="col"></div>
+      <div class="col-4">
+        <div class="card shadow">
+          <div class="card-body">
+            <form>
+              <div class="mb-3">
+                <h4 class="text-dark text-muted">Register</h4>
+              </div>
+              <div class="mb-3">
+                <mat-form-field appearance="fill">
+                  <mat-label>Email</mat-label>
+                  <input matInput type="email" name="email" [(ngModel)]="email">
+                  <mat-icon matSuffix> email</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="mb-3">
+                <mat-form-field>
+                  <mat-label>Enter your password</mat-label>
+                  <input matInput [type]="hide ? 'password' : 'text'"  name="password" [(ngModel)]="password" >
+                  <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                </mat-form-field><br>
+                <mat-radio-group aria-label="Select an option">
+                  <mat-radio-button value="1">Férfi</mat-radio-button>
+                  <mat-radio-button value="2">Nő</mat-radio-button>
+                </mat-radio-group>
+                <p><mat-slide-toggle>Szeretnék emailt kapni a frissítésekről</mat-slide-toggle></p>
+              </div>
+              <button mat-raised-button color="primary" type="button" (click)="register()">Regisztrálás</button>
+            </form>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <a href="/login" style="text-decoration: none;">Már van fiókod? <span class="text-danger">Jelentkezz be</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
+  

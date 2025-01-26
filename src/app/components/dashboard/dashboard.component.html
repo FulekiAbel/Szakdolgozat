@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pénzügyi Tervező Alkalmazás</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    div {
+      padding: 1rem;
+      margin: 1rem;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #007bff;
+    }
+
+    form {
+      margin-bottom: 1rem;
+    }
+
+    form div {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #007bff;
+      color: #fff;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pénzügyi Tervező Alkalmazás</h1>
+    <p>Segít jobb pénzügyi döntéseket hozni.</p>
+  </header>
+
+
+    <div>
+      <h2>Kövesd a Kiadásaidat</h2>
+      <form>
+        <div>
+          <label for="category">Kategória</label><br>
+          <select id="category" name="category">
+            <option value="food">Élelmiszer</option>
+            <option value="transport">Közlekedés</option>
+            <option value="utilities">Rezsi</option>
+            <option value="entertainment">Szórakozás</option>
+          </select>
+        </div>
+        <div>
+          <label for="amount">Összeg</label><br>
+          <input type="number" id="amount" name="amount" placeholder="Írd be az összeget">
+        </div>
+        <div>
+          <button type="submit">Kiadás Hozzáadása</button>
+        </div>
+      </form>
+    </div>
+
+    <div>
+      <h2>Állíts Be Pénzügyi Célokat</h2>
+      <form>
+        <div>
+          <label for="goal">Cél Neve</label><br>
+          <input type="text" id="goal" name="goal" placeholder="Pl.: Nyári Nyaralás">
+        </div>
+        <div>
+          <label for="target">Célösszeg</label><br>
+          <input type="number" id="target" name="target" placeholder="Írd be a célösszeget">
+        </div>
+        <div>
+          <label for="deadline">Határidő</label><br>
+          <input type="date" id="deadline" name="deadline">
+        </div>
+        <div>
+          <button type="submit">Cél Hozzáadása</button>
+        </div>
+      </form>
+    </div>
+
+    <div>
+      <h2>Céljaid</h2>
+      <div>
+        <div>
+          <h3>Nyári Nyaralás</h3>
+          <p>Célösszeg: 200,000 Ft</p>
+          <p>Határidő: 2025-06-01</p>
+          <p>Haladás: 50,000 Ft megtakarítva</p>
+        </div>
+        <div>
+          <h3>Vésztartalék</h3>
+          <p>Célösszeg: 500,000 Ft</p>
+          <p>Határidő: 2026-01-01</p>
+          <p>Haladás: 300,000 Ft megtakarítva</p>
+        </div>
+      </div>
+    </div>
+
+
+  <footer>
+    <p>&copy; 2025 Pénzügyi Tervező Alkalmazás. Minden jog fenntartva.</p>
+  </footer>
+</body>
+</html>
