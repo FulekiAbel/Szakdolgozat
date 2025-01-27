@@ -19,6 +19,7 @@
       color: #fff;
       padding: 1rem 0;
       text-align: center;
+      
     }
 
     header h1 {
@@ -77,12 +78,21 @@
       bottom: 0;
       width: 100%;
     }
+
+    .logout-button {
+      background: #dc3545;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Pénzügyi Tervező Alkalmazás</h1>
     <p>Segít jobb pénzügyi döntéseket hozni.</p>
+      <button type="button" class="logout-button"  (click)="logout()">Kilépés</button>
   </header>
 
 

@@ -11,7 +11,6 @@ export class AuthService {
 
   constructor(private fireauth : AngularFireAuth, private router: Router) { }
 
-  //login
   login(email : string, password : string){
     this.fireauth.signInWithEmailAndPassword(email,password).then( () =>{
         localStorage.setItem('token','true');
@@ -22,7 +21,6 @@ export class AuthService {
       })
   }
 
-  //register
   register(email: string, password : string){
     this.fireauth.createUserWithEmailAndPassword(email,password).then( () =>{
       this.router.navigate(['/login'])
@@ -33,7 +31,6 @@ export class AuthService {
     })
   }
 
-  //logout
   logout(){
     this.fireauth.signOut().then( () =>{
       localStorage.removeItem('token');
@@ -48,9 +45,9 @@ export class AuthService {
     return this.fireauth.authState.pipe(
       map(user => {
         if (user) {
-          return true; // If user is authenticated, allow access
+          return true;
         } else {
-          this.router.navigate(['/login']); // If user is not authenticated, redirect to login page
+          this.router.navigate(['/login']); 
           return false;
         }
       })
