@@ -1,0 +1,138 @@
+<nz-tabset [(nzSelectedIndex)]="selectedTabIndex" style="margin: 24px;">
+    <nz-tab nzTitle="Árfolyamok">
+      <div *ngIf="latestRates; else loading">
+        <h3>Árfolyamok ({{ baseCurrency }})</h3>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Valuta</th>
+              <th>{{ baseCurrency }} / Valuta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let code of currencyCodes">
+              <ng-container *ngIf="code !== baseCurrency">
+                <td>{{ code }}</td>
+                <td *ngIf="latestRates[code]">{{ (1 / latestRates[code]) | number: '1.2-2' }}
+                  <span *ngIf="rateChanges[code] === 'up'">
+                    <span nz-icon nzType="arrow-up" style="color: red; margin-left: 4px;"></span>
+                  </span>
+                  <span *ngIf="rateChanges[code] === 'down'">
+                    <span nz-icon nzType="arrow-down" style="color: green; margin-left: 4px;"></span>
+                  </span>
+                  <span *ngIf="rateChanges[code] === 'same'">
+                    <span nz-icon nzType="minus" style="color: gray; margin-left: 4px;"></span>
+                  </span>
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+
+        <nz-card nzTitle="Valuta árfolyam grafikon" style="margin-top: 24px;">
+          <div nz-row [nzGutter]="16" style="align-items: center; flex-wrap: wrap;">
+
+            <div nz-col [nzSpan]="14" style="display: flex; align-items: center; gap: 8px;">
+              <nz-select [(ngModel)]="graphFrom" (ngModelChange)="loadHistoricalRates(graphFrom, graphTo)" style="width: 100px;">
+                <nz-option *ngFor="let code of currencyCodes" [nzValue]="code" [nzLabel]="code"></nz-option>
+              </nz-select>
+        
+              <button nz-button nzShape="circle" (click)="swapCurrencies()">↔</button>
+        
+              <nz-select [(ngModel)]="graphTo" (ngModelChange)="loadHistoricalRates(graphFrom, graphTo)" style="width: 100px;">
+                <nz-option *ngFor="let code of currencyCodes" [nzValue]="code" [nzLabel]="code"></nz-option>
+              </nz-select>
+            </div>
+
+            <div nz-col [nzSpan]="10" style="text-align: right;">
+              <nz-radio-group [(ngModel)]="selectedRange" (ngModelChange)="loadHistoricalRates(graphFrom, graphTo)">
+                <label nz-radio-button nzValue="7d">7 nap</label>
+                <label nz-radio-button nzValue="30d">30 nap</label>
+                <label nz-radio-button nzValue="90d">90 nap</label>
+                <label nz-radio-button nzValue="1y">1 év</label>
+              </nz-radio-group>
+            </div>
+          </div>
+          
+            <div *ngIf="activeTab === 'rates'" style="margin-top: 20px;">
+              <canvas #chartRef height="100"></canvas>
+            </div>
+          </nz-card>
+          
+
+      </div>
+      <ng-template #loading>
+        <nz-spin nzTip="Betöltés..."></nz-spin>
+      </ng-template>
+    </nz-tab>
+  
+    <nz-tab nzTitle="Váltó">
+      <form [formGroup]="exchangeForm" style="max-width: 400px; margin: auto;">
+        
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Összeg</nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input type="number" formControlName="amount" required />
+          </nz-form-control>
+        </nz-form-item>
+    
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">Átváltás</nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <nz-select formControlName="from" style="flex: 1;">
+                <nz-option *ngFor="let code of currencyCodes" [nzValue]="code" [nzLabel]="code"></nz-option>
+              </nz-select>
+    
+              <button nz-button nzShape="circle" nzType="default" (click)="swapCurrencies()" type="button">
+                🔄
+              </button>
+    
+              <nz-select formControlName="to" style="flex: 1;">
+                <nz-option *ngFor="let code of currencyCodes" [nzValue]="code" [nzLabel]="code"></nz-option>
+              </nz-select>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+    
+      </form>
+      
+        <div *ngIf="conversionResult !== null && exchangeForm.value.amount > 0" style="margin-top: 20px; text-align: center;">
+          <strong>Eredmény:</strong><br>
+          {{ exchangeForm.value.amount }} {{ exchangeForm.value.from }} =
+          {{ conversionResult | number:'1.2-2' }} {{ exchangeForm.value.to }}
+        </div>
+
+        <nz-card nzTitle="📰 Gazdasági hírek a Portfolio.hu-ról" *ngIf="!isLoadingNews" style="margin-top: 24px;">
+
+          <ng-container *ngIf="news.length > 0; else noNews">
+            <ul style="padding-left: 0; list-style: none;">
+              <li *ngFor="let item of visibleNews" style="margin-bottom: 16px; display: flex; gap: 12px;">
+                <img
+                  *ngIf="item.thumbnail || item.enclosure?.link"
+                  [src]="item.thumbnail || item.enclosure?.link"
+                  alt="Kép"
+                  style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;" />
+            
+                <div style="flex: 1;">
+                  <a [href]="item.link" target="_blank" style="font-weight: 500;">{{ item.title }}</a>
+                  <p style="font-size: 12px; color: gray; margin: 4px 0;">
+                    🕒 {{ item.pubDate | date: 'yyyy.MM.dd HH:mm' }}
+                  </p>
+                </div>
+              </li>
+            </ul> 
+          </ng-container>
+          <div style="text-align: center;" *ngIf="news.length > visibleCount">
+            <button nz-button nzType="link" (click)="showMoreNews()">
+              Mutass többet
+            </button>
+          </div>
+          <ng-template #noNews>
+            <p>Nincs elérhető hír.</p>
+          </ng-template>
+        </nz-card>
+
+      </nz-tab>
+  </nz-tabset>
+  

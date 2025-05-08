@@ -1,0 +1,88 @@
+<div>
+    <div nz-row>
+        <div nz-col nzFlex="2">
+            <nz-card nzType="inner" style="margin-top:16px;" nzTitle="Vegyél fel új kiadást">
+                <form nz-form [formGroup]="expenseForm" (ngSubmit)="submitForm()" class="custm-form">
+                  <label class="form-label">Cím</label>  
+                  <nz-form-item>
+                        <nz-form-control nzErrorTip="Adj meg egy címet!">
+                            <input type="text" nz-input formControlName="title" placeholder="Adj meg egy címet!" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <label class="form-label">Összeg</label>
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="Adj meg egy összeget!">
+                            <input type="number" nz-input formControlName="amount" placeholder="Adj meg egy összeget!" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <label class="form-label">Dátum</label>
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="Adj meg egy dátumot!">
+                            <nz-date-picker style="width: 100%;" formControlName="date"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <label class="form-label">Kategória</label>
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="Adjon meg egy kategóritá!">
+                            <nz-select nzAllowClear nzPlaceHolder="Válassz egy kategóritát!" formControlName="category">
+                                <nz-option *ngFor="let category of listOfCategory" [nzLabel]="category"
+                                [nzValue]="category"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <label class="form-label">Leírás</label>
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="Adjon meg egy leírást!">
+                            <textarea nz-input placeholder="Adj meg egy leírást!" [nzAutosize]="{minRows: 2, maxRows: 6}"
+                            formControlName="description"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <button nz-button nzType="primary" nzBlock [disabled]="expenseForm.invalid" class="w-100">Kiadás Rögzítése</button>
+                </form>
+            </nz-card>
+        </div>
+
+        <div nz-col nzFlex="3" style="margin-left: 20px;">
+            <nz-card nzType="inner" style="margin-top: 16px;" nzTitle="Korábbi Kiadások">
+              <ng-container *ngIf="expenses$ | async as expenses; else loading">
+                <div
+                  nz-card-grid style="width: 100%;" *ngFor="let expense of paginatedIncomes" (click)="editExpense(expense)">
+                  <div nz-row>
+                    <div nz-col nzSpan="18">
+                      <span nz-icon nzType="message" nzTheme="outline"></span>
+                      {{ expense.title }} -
+                      <span nz-icon nzType="dollar" nzTheme="outline"></span>
+                      {{ expense.amount | currency:'Ft ':'symbol':'1.0-0' }} -
+                      <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+                      {{ expense.date.toDate() | date: 'yyyy.MM.dd' }} -
+                      <span nz-icon nzType="comment" nzTheme="outline"></span>
+                      {{ expense.category }}
+                    </div>
+                    <div nz-col nzSpan="6" style="font-size: 15px;">
+                      <span nz-icon nzType="edit" nzTheme="fill" style="color: blue; cursor: pointer; margin-right: 10px;" 
+                      (click)="editExpense(expense)"></span>
+                      <span nz-icon nzType="delete" nzTheme="fill" style="color: red; cursor: pointer;"
+                        (click)="deleteExpense(expense.id)"></span>
+                    </div>
+                  </div>
+                </div>
+                <nz-pagination [(nzPageIndex)]="currentPage" [nzTotal]="expenses.length" [nzPageSize]="pageSize" [nzShowSizeChanger]="false"
+                  style="margin-top: 16px; text-align: center;">
+                </nz-pagination>
+              </ng-container>
+              <ng-template #loading>
+                <p>Betöltés...</p>
+              </ng-template>
+            </nz-card>
+          </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzFlex="2">
+        <nz-card nzType="inner" style="margin-top: 16px;" nzTitle="Kördiagramm">
+          <div style="width: 400px; height: 400px; margin: 0 auto; position: relative;">
+            <canvas #expensePieChartRef></canvas>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+</div>

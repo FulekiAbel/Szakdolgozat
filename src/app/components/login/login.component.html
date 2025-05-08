@@ -1,40 +1,39 @@
-<div class="container-fluid">
-    <div class="row mt-5">
-      <div class="col"></div>
-      <div class="col-4">
-        <div class="card shadow">
-          <div class="card-body">
-            <form>
-              <div class="mb-3">
-                <h4 class="text-dark text-muted">Login</h4>
-              </div>
-              <div class="mb-3">
-                <mat-form-field appearance="fill">
-                  <mat-label>Email</mat-label>
-                  <input matInput type="email" name="email" [(ngModel)]="email">
-                  <mat-icon matSuffix> email</mat-icon>
-                </mat-form-field>
-              </div>
-              <div class="mb-3">
-                <mat-form-field>
-                  <mat-label>Enter your password</mat-label>
-                  <input matInput [type]="hide ? 'password' : 'text'" name="password" [(ngModel)]="password">
-                  <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  </button>
-                </mat-form-field>
-              </div>
-              <button mat-raised-button color="primary" type="button" (click)="login()">Login</button>
-            </form>
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <a href="/register" style="text-decoration: none;">Még nincs fiókod? <span class="text-danger">Regisztrálj</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col"></div>
-    </div>
+<div class="login-container">
+  <div class="logo-section">
+    <img src="assets/Fortunetrack_logo.png" class="header-logo" alt="Logo" />
   </div>
-  
+
+  <nz-card class="login-card" nzTitle="Bejelentkezés" [nzBordered]="false">
+    <form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Email</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <input nz-input type="email" name="email" [(ngModel)]="email" />
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24">Jelszó</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <div style="position: relative;">
+            <input nz-input [type]="hide ? 'password' : 'text'" name="password" [(ngModel)]="password" 
+              style="width: 100%; padding-right: 40px;"/>
+            <button nz-button nzType="text" nzSize="small" (click)="hide = !hide"
+              style=" position: absolute; top: 50%; right: 8px; transform: translateY(-50%); z-index: 1;">
+              <i nz-icon [nzType]="hide ? 'eye-invisible' : 'eye'" nzTheme="outline" nz-tooltip
+                [nzTooltipTitle]="hide ? 'Jelszó megjelenítése' : 'Jelszó elrejtése'"></i>
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div style="margin-top: 12px; text-align: center;">
+        <button nz-button nzType="primary" (click)="login()">Bejelentkezés</button>
+      </div>
+    </form>
+
+    <div style="margin-top: 16px; text-align: center;">
+      <a routerLink="/register">Még nincs fiókod? <span class="text-danger">Regisztrálj</span></a>
+    </div>
+  </nz-card>
+</div>

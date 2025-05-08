@@ -1,1 +1,95 @@
-<router-outlet></router-outlet>
+<nz-layout class="nz-layout">
+  <nz-sider *ngIf="isLoggedIn">
+    <div class="logo">
+      <img src="assets/Fortunetrack_logo.png"
+      alt="Avatar class"avatar>
+      <div class="user-info">
+        </div>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline">
+      <li nz-menu-item routerLink="/dashboard">
+        <span nz-icon nzType="exception" class="menu-icon"></span>
+        <span>Főoldal</span>
+      </li>
+      <li nz-menu-item routerLink="/bevetel">
+        <span nz-icon nzType="bank" class="menu-icon"></span>
+        <span>Bevétel</span>
+      </li>
+      <li nz-menu-item routerLink="/kiadas">
+        <span nz-icon nzType="fall" class="menu-icon"></span>
+        <span>Kiadások</span>
+      </li>
+      <li nz-menu-item routerLink="/golok">
+        <span nz-icon nzType="trophy" class="menu-icon"></span>
+        <span>Célok</span>
+      </li>
+      <li nz-menu-item routerLink="/arfolyam">
+        <span nz-icon nzType="euro" class="menu-icon"></span>
+        <span>Árfolyamok</span>
+      </li>
+      <li nz-menu-item (click)="openNotificationModal()">
+        <div style="position: relative; display: flex; align-items: center;">
+          <ng-container *ngIf="hasUnread">
+            <nz-badge [nzCount]="unreadCount" [nzOverflowCount]="99" [nzOffset]="[0, 6]">
+              <span nz-icon nzType="bell" class="menu-icon" style="color: white;"></span>
+            </nz-badge>
+          </ng-container>
+          <ng-container *ngIf="!hasUnread">
+            <span nz-icon nzType="bell" class="menu-icon" style="color: white;"></span>
+          </ng-container>
+          <ng-template #normalIcon>
+            <span nz-icon nzType="bell" class="menu-icon" style="color: white;"></span>
+          </ng-template>
+          <span style="margin-left: 15px;">Értesítések</span>
+        </div>
+      </li>
+      <li nz-menu-item (click)="logout()">
+        <span nz-icon nzType="logout" class="menu-icon"></span>
+        <span>Kijelentkezés</span>
+      </li>      
+    </ul>
+  </nz-sider>
+
+  <nz-layout class="right-layout">
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+
+</nz-layout>
+
+<nz-modal [(nzVisible)]="isNotificationModalOpen" nzTitle="Értesítések" [nzFooter]="null" (nzOnCancel)="isNotificationModalOpen = false" [nzWidth]="500">
+  <div *nzModalContent>
+    <div *ngIf="notifications.length > 0; else noNotifications">
+      <ul style="padding-left: 0; list-style: none;">
+        <li *ngFor="let n of paginatedNotifications" (click)="markAsRead(n.id)"
+        [ngStyle]="{
+          opacity: n.read ? 0.6 : 1,
+          backgroundColor: n.read ? 'transparent' : '#f0f9ff',
+          borderLeft: n.read ? 'none' : '3px solid #1890ff'}"
+        style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding: 8px; cursor: pointer; border-radius: 4px; transition: all 0.2s;">
+        <strong
+          [style.fontWeight]="n.read ? 'normal' : 'bold'"
+          [style.color]="n.read ? '#555' : '#000'">
+          {{ n.read ? '✅' : '✉️' }} {{ n.title }}
+        </strong><br />
+        <span>{{ n.message }}</span><br />
+        <small style="color: gray;">🕒 {{ n.date | date: 'yyyy.MM.dd HH:mm' }}</small>
+      </li>
+      </ul>
+    </div>
+    <div *ngIf="totalPages > 1" style="text-align: center; margin: 10px 0;">
+      <button nz-button nzType="default" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">Előző</button>
+      <span style="margin: 0 10px;">{{ currentPage }} / {{ totalPages }}</span>
+      <button nz-button nzType="default" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">Következő</button>
+    </div>
+
+    <ng-template #noNotifications>
+      <p>Nincs értesítés.</p>
+    </ng-template>
+    <hr/>
+  </div>
+</nz-modal>
+

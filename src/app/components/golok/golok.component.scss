@@ -1,0 +1,54 @@
+.form-label {
+    display: block;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  nz-form-item {
+    margin-bottom: 12px !important;
+  }
+
+  .goal-low {
+    border-left: 4px solid #91d5ff;
+    padding-left: 8px;
+  }
+  
+  .goal-medium {
+    border-left: 4px solid #ffe58f;
+    padding-left: 8px;
+  }
+  
+  .goal-high {
+    border-left: 4px solid #ff7875;
+    padding-left: 8px;
+  }
+
+
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  
+  .sort-select {
+    min-width: 200px;
+    flex: 1 1 auto;
+  }
+  
+  .status-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .status-label {
+    font-weight: 600;
+  }
+  

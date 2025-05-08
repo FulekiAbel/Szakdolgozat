@@ -1,0 +1,214 @@
+<div>
+    <div nz-row>
+      <div nz-col nzFlex="2">
+        <nz-card nzType="inner" style="margin-top: 16px;" nzTitle="Új célkitűzés">
+          <form nz-form [formGroup]="goalForm" (ngSubmit)="createGoal()" class="custm-form">
+            <label class="form-label">Cím</label>
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Adj meg egy címet!">
+                <input type="text" nz-input formControlName="title" placeholder="Cél címe" />
+              </nz-form-control>
+            </nz-form-item>
+            <label class="form-label">Összeg</label>
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Adj meg egy összeget!">
+                <input type="number" nz-input formControlName="amount" placeholder="Cél összege (Ft)" />
+              </nz-form-control>
+            </nz-form-item>
+            <label class="form-label">Dátum</label>
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Adj meg egy dátumot!">
+                <nz-date-picker style="width: 100%;" formControlName="targetDate"></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+            <label class="form-label">Prioritás</label>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-select nzPlaceHolder="Prioritás" formControlName="priority">
+                  <nz-option nzValue="Low" nzLabel="Alacsony"></nz-option>
+                  <nz-option nzValue="Medium" nzLabel="Közepes"></nz-option>
+                  <nz-option nzValue="High" nzLabel="Magas"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            <label class="form-label">Hozzájárulás gyakorisága</label>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-select nzPlaceHolder="Hozzájárulás gyakorisága" formControlName="frequency" (ngModelChange)="updateContributionAmount()">
+                  <nz-option nzValue="weekly" nzLabel="Heti"></nz-option>
+                  <nz-option nzValue="monthly" nzLabel="Havi"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-control>
+                  <label style="display: flex; align-items: center; gap: 8px;">
+                    <nz-switch formControlName="notificationsEnabled"></nz-switch>
+                    <span>🔔 Értesítés kérése</span>
+                  </label>
+                </nz-form-control>
+              </nz-form-item>
+  
+            <div *ngIf="calculatedAmount">
+              <p><strong>{{ calculatedAmount | number: '1.0-0' }} Ft</strong>
+                megtakarítás szükséges {{ goalForm.value.frequency === 'weekly' ? 'hetente' : 'havonta' }} a cél eléréséhez
+                {{ goalForm.value.targetDate | date: 'yyyy.MM.dd' }}-ig.
+              </p>
+            </div>
+            <button nz-button nzType="primary" nzBlock [disabled]="goalForm.invalid">Cél létrehozása</button>
+          </form>
+        </nz-card>
+
+      <div style="margin-top: 16px;">
+        <nz-card nzType="inner" nzTitle="📊 Célösszesítő">
+          <div>
+            <p>🎯 Aktív célok: <strong>{{ summary.active }}</strong></p>
+            <p>✅ Teljesítve: <strong>{{ summary.completed }}</strong></p>
+            <p>⚠️ Lejárt: <strong>{{ summary.expired }}</strong></p>
+            <p>💸 Havi szükséges megtakarítás az összes célhoz: <strong>{{ summary.requiredMonthlySaving | number:'1.0-0' }} Ft</strong></p>
+            <p>🧮 Még szükséges összeg a folyamatban lévő célokhoz: <strong>{{ summary.totalRemaining | number:'1.0-0' }} Ft</strong></p>
+            <p>📈 Átlagos előrehaladás: <strong>{{ summary.averageProgress }}%</strong></p>
+            <p>🏦 Eddig félretett összeg: <strong>{{ summary.totalSaved | number:'1.0-0' }} Ft</strong></p>
+            <p>🚀 Az összes célod megvalósításához ennyit tettél már félre:</p>
+            <nz-progress
+            [nzPercent]="getTotalProgress()"
+            [nzStrokeColor]="'#1890ff'"
+            [nzStatus]="(summary.totalSaved >= summary.totalGoalAmount) ? 'success' : 'active'">
+          </nz-progress>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  
+    <div nz-col nzFlex="3" style="margin-left: 20px;">
+        <nz-card nzType="inner" style="margin-top: 16px;" nzTitle="Céljaid">
+        <div class="filter-container">
+          <div class="sort-select">
+            <nz-select [(ngModel)]="sortBy" (ngModelChange)="sortGoals()">
+              <nz-option nzValue="deadline" nzLabel="Lejárat szerint"></nz-option>
+              <nz-option nzValue="progress" nzLabel="Előrehaladás szerint"></nz-option>
+              <nz-option nzValue="priority" nzLabel="Prioritás szerint"></nz-option>
+            </nz-select>
+          </div>
+          <div class="status-filters">
+            <label class="status-label">Szűrés státusz szerint:</label>
+            <label nz-checkbox [(ngModel)]="statusFilters.completed" (ngModelChange)="currentPage = 1">Teljesítve</label>
+            <label nz-checkbox [(ngModel)]="statusFilters.expired" (ngModelChange)="currentPage = 1">Lejárt</label>
+            <label nz-checkbox [(ngModel)]="statusFilters.active" (ngModelChange)="currentPage = 1">Folyamatban</label>
+          </div>
+        </div>
+              <ng-container *ngIf="goals$ | async as goals; else loading">
+                <div nz-card-grid style="width: 100%; cursor: default;" *ngFor="let goal of paginatedGoals"
+                [ngClass]="{
+                  'goal-low': goal.priority === 'Low',
+                  'goal-medium': goal.priority === 'Medium',
+                  'goal-high': goal.priority === 'High'}">
+                  <div nz-row>
+                    <div nz-col nzSpan="24">
+                      <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;"
+                      (click)="toggleGoal(goal.id)">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                          <h4 style="margin: 0; font-weight: bold; font-size: 18px;">{{ goal.title }}</h4>
+                        </div>
+
+                        <div style="display: flex; gap: 8px;">
+                          <nz-tag
+                            [nzColor]="goal.priority === 'Low' ? 'default' :
+                                       goal.priority === 'Medium' ? 'gold' : 'red'"
+                            style="font-weight: 600;">
+                            {{goal.priority === 'Low' ? 'ALACSONY PRIORITÁS' :
+                              goal.priority === 'Medium' ? 'KÖZEPES PRIORITÁS' :
+                              'MAGAS PRIORITÁS'}}
+                          </nz-tag>
+                          <nz-badge
+                            [nzStatus]="getGoalStatus(goal) === 'completed' ? 'success' :
+                                        getGoalStatus(goal) === 'expired' ? 'error' : 'processing'"
+                            [nzText]="getGoalStatus(goal) === 'completed' ? 'Teljesítve' :
+                                      getGoalStatus(goal) === 'expired' ? 'Lejárt' : 'Folyamatban'">
+                          </nz-badge>
+                        </div>
+                      </div>
+
+                      <p *ngIf="getMilestoneMessage(goal)">
+                        {{ getMilestoneMessage(goal) }}
+                      </p>
+                      <p>🎯 Cél összege: <strong>{{ goal.amount | number:'1.0-0' }} Ft</strong></p>
+                      <p>💰 Eddig félretett: <strong>{{ goal.savedAmount | number:'1.0-0' }} Ft</strong></p>
+                      <nz-progress
+                        [nzPercent]="getProgress(goal)"
+                        [nzStrokeColor]="'#1890ff'"
+                        [nzStatus]="getProgress(goal) === 100 ? 'success' : 'active'">
+                      </nz-progress>
+                      <p>📅 Határidő: {{ goal.targetDate.toDate() | date: 'yyyy.MM.dd' }}</p>
+              
+                      <div *ngIf="getSuggestedContribution(goal) as suggestion">
+                        <p>
+                          ⚙️ Ahhoz, hogy időben elérd a célt:
+                          <strong>{{ suggestion | number:'1.0-0' }} Ft</strong>
+                          {{ goal.frequency === 'weekly' ? 'hetente' : 'havonta' }}
+                          kell félretenned.
+                        </p>
+                      </div>
+
+                      <div *ngIf="expandedGoalId === goal.id">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                          <nz-switch
+                            [(ngModel)]="goal.notificationsEnabled"
+                            (ngModelChange)="toggleReminder(goal)">
+                          </nz-switch>
+                          <span>🔔 Értesítés kérése</span>
+                        </label>
+
+                        <div style="margin-top: 10px;">
+                          <input nz-input type="number" placeholder="Hozzáadott összeg (Ft)"
+                            [(ngModel)]="contributionAmounts[goal.id]" style="width: 70%; margin-right: 8px;" />
+                          <button nz-button nzType="default" (click)="addContribution(goal)">Hozzáadás</button>
+                          <button nz-button nzType="dashed"(click)="fillFullAmount(goal)">Teljesítés 💯</button>
+                        </div>
+
+                        <div *ngIf="goal.contributions?.length" style="margin-top: 10px;">
+                          <h5>📜 Hozzájárulások:</h5>
+                          <ul>
+                            <li *ngFor="let c of goal.contributions">
+                              {{ c.date.toDate() | date: 'yyyy.MM.dd' }} – {{ c.amount | number:'1.0-0' }} Ft
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div nz-col nzSpan="24" style="text-align: right; margin-top: 10px;">
+                      <span
+                        nz-icon nzType="edit" nzTheme="fill"
+                        style="color: blue; cursor: pointer; margin-right: 10px;"
+                        (click)="editGoal(goal)">
+                      </span>
+                      <span
+                        nz-icon nzType="delete" nzTheme="fill"
+                        style="color: red; cursor: pointer;"
+                        (click)="deleteGoal(goal.id)">
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+            <nz-pagination
+              [(nzPageIndex)]="currentPage"
+              [nzTotal]="goals.length"
+              [nzPageSize]="pageSize"
+              [nzShowSizeChanger]="false"
+              style="margin-top: 16px; text-align: center;">
+            </nz-pagination>
+          </ng-container>
+
+          <ng-template #loading>
+            <div style="text-align: center; padding: 20px;">
+              <nz-spin nzSimple></nz-spin>
+              <p>Betöltés...</p>
+            </div>
+          </ng-template>
+        </nz-card>
+      </div>
+    </div>
+  </div>

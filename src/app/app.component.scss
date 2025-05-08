@@ -1,0 +1,92 @@
+::ng-deep .ant-menu {
+    font-size: 25px; 
+    font-weight: 500;
+  }
+
+.nz-layout {
+    display: flex;
+    height: 100vh;
+  }
+  
+  ::ng-deep .ant-layout-sider {
+    width: 300px !important;
+    max-width: 300px !important;
+    flex: 0 0 300px !important;
+  }
+  
+.logo {
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 150px;
+  width: auto;
+  height: auto;
+  object-fit: contain; // This avoids cropping
+  display: block;
+  margin: 0 auto;
+}
+  
+  .user-info {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  ul[nz-menu] {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  ul[nz-menu] li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    margin: 15px 0;
+  }
+  
+  ul[nz-menu] li:hover {
+    background-color: #1890ff;
+  }
+  
+  ul[nz-menu] li nz-icon {
+    margin-right: 10px;
+  }
+
+  ::ng-deep .menu-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  
+  .right-layout {
+    flex-grow: 1;
+    background-color: #f0f2f5;
+    padding: 30px;
+    overflow: auto;
+  }
+  
+  .inner-content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  ::ng-deep li[nz-menu-item] {
+    overflow: visible !important;
+    position: relative;
+  }
+
+  ::ng-deep .ant-menu {
+    overflow: visible !important;
+  }
+
+  ::ng-deep .ant-layout-sider {
+    overflow: visible !important;
+  }
